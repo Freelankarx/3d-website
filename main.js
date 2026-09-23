@@ -20,6 +20,7 @@ class WebGLEngine {
     this.coreStructure = null;
     this.directionalLight = null;
     this.interiorPointLight = null;
+    this.mainWallsMaterial = null;
 
     this.init();
   }
@@ -91,8 +92,6 @@ class WebGLEngine {
   }
 
   buildStructuralPlaceholders() {
-    // This serves as your 3D placeholder scene. 
-    // In production, replace this block with a GLTFLoader to load your external .glb file.
     this.coreStructure = new THREE.Group();
 
     // Architectural Ground / Foundation Plate Mesh
@@ -105,19 +104,18 @@ class WebGLEngine {
 
     // Primary Room Core Wall Meshes
     const wallsGeo = new THREE.BoxGeometry(6, 2, 6);
-    const wallsMat = new THREE.MeshPhysicalMaterial({
+    this.mainWallsMaterial = new THREE.MeshPhysicalMaterial({
       color: '#444444',
       roughness: 0.4,
       metalness: 0.1,
-      transmission: 0.0, // Swapped programmatically inside scroll matrices
+      transmission: 0.0,
       transparent: true,
       opacity: 1.0
     });
-    const wallsMesh = new THREE.Mesh(wallsGeo, wallsMat);
+    const wallsMesh = new THREE.Mesh(wallsGeo, this.mainWallsMaterial);
     wallsMesh.castShadow = true;
     wallsMesh.receiveShadow = true;
     this.coreStructure.add(wallsMesh);
-    this.mainWallsMaterial = wallsMat; // Retain material pointer reference for GSAP access
 
     // Removable Architectural Roof Assembly Mesh
     const roofGeo = new THREE.BoxGeometry(6.4, 0.4, 6.4);
@@ -133,7 +131,6 @@ class WebGLEngine {
 
   setupResizeListener() {
     window.addEventListener('resize', () => {
-      // Dynamic internal buffer sizing adjustments matching responsive state changes
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
 
@@ -143,23 +140,22 @@ class WebGLEngine {
   }
 
   setupScrollTimeline() {
-    // Generate Master Timeline with ScrollTrigger integration tracking the container height
     const globalTimeline = gsap.timeline({
       scrollTrigger: {
         trigger: '.scroll-container',
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 1.5, // High scrub delay creates that luxurious, heavy, high-end Lusion kinetic drag
+        scrub: 1.5,
       }
     });
 
-    // --- PHASE 1: Reveal HTML Header Cover & Deconstruct Roof ---
+    // --- PHASE 1 ---
     globalTimeline.to('#section-1 .content-card', { opacity: 1, y: 0, duration: 1 }, 0)
                   .to(this.roofMesh.position, { y: 5, duration: 3, ease: 'power2.inOut' }, 0)
                   .to(this.camera.position, { x: 4, y: 6, z: 12, duration: 3 }, 0)
                   .to('#section-1 .content-card', { opacity: 0, y: -40, duration: 1 }, 2);
 
-    // --- PHASE 2: Dive Camera Into Interior Space & Adapt Lights ---
+    // --- PHASE 2 ---
     globalTimeline.to('#section-2 .content-card', { opacity: 1, y: 0, duration: 1 }, 3)
                   .to(this.camera.position, { x: 0, y: 0.2, z: 4, duration: 4, ease: 'power1.inOut' }, 3)
                   .to(this.mainWallsMaterial, { opacity: 0.15, transmission: 0.6, duration: 3 }, 3)
@@ -167,13 +163,13 @@ class WebGLEngine {
                   .to(this.interiorPointLight, { intensity: 4, duration: 3 }, 4)
                   .to('#section-2 .content-card', { opacity: 0, y: -40, duration: 1 }, 6);
 
-    // --- PHASE 3: Rotate View Frame & Inspect Geometry Detail ---
+    // --- PHASE 3 ---
     globalTimeline.to('#section-3 .content-card', { opacity: 1, y: 0, duration: 1 }, 7)
                   .to(this.camera.position, { x: -3, y: 1, z: 2, duration: 4, ease: 'power2.inOut' }, 7)
                   .to(this.coreStructure.rotation, { y: Math.PI * 0.5, duration: 4 }, 7)
                   .to('#section-3 .content-card', { opacity: 0, y: -40, duration: 1 }, 10);
 
-    // --- PHASE 4: Extract View to Wide Flyout Perspective ---
+    // --- PHASE 4 ---
     globalTimeline.to('#section-4 .content-card', { opacity: 1, y: 0, duration: 1 }, 11)
                   .to(this.camera.position, { x: 0, y: 12, z: 16, duration: 4, ease: 'zoom.out' }, 11)
                   .to(this.mainWallsMaterial, { opacity: 1.0, transmission: 0.0, duration: 3 }, 11)
@@ -183,23 +179,21 @@ class WebGLEngine {
   }
 
   tick() {
-    // The render loop keeps calculating variations running independent of core monitor frames
     const elapsedTime = this.clock.getElapsedTime();
 
-    // Inject automated background idle movements to keep scene looking organic
+    // Inject automated background idle movements
     if (this.coreStructure && !ScrollTrigger.isScrolling) {
       this.coreStructure.rotation.x = Math.sin(elapsedTime * 0.2) * 0.05;
     }
 
-    // Process and repaint actual structural canvas changes via GPU
+    // Fixed rendering statement execution syntax loop
     this.renderer.render(this.scene, this.camera);
 
-    // Recursively handle following frame processing loops natively
     window.requestAnimationFrame(() => this.tick());
   }
 }
 
-// Instantiate core runtime engine immediately upon document completion
+// Instantiate engine initialization execution when DOM builds completely
 window.addEventListener('DOMContentLoaded', () => {
   new WebGLEngine();
 });
