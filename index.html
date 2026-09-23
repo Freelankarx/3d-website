@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Production 3D Scroll Engine</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <!-- The dedicated hardware-accelerated canvas for Three.js rendering -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Scroll Container layout defining the vertical height tracks -->
+  <main class="scroll-container">
+    
+    <!-- Section 1: Hero Cover Phase -->
+    <section class="scroll-section" id="section-1">
+      <div class="content-card">
+        <h1>THE ARCHITECTURE</h1>
+        <p>Scroll downward to disassemble the exterior structural layers.</p>
+      </div>
+    </section>
+
+    <!-- Section 2: Interior Entry Phase -->
+    <section class="scroll-section" id="section-2">
+      <div class="content-card modern-right">
+        <h1>THE INTERIOR PLAN</h1>
+        <p>Exploring localized spaces under dynamic physics-based lighting environments.</p>
+      </div>
+    </section>
+
+    <!-- Section 3: Component Engineering Phase -->
+    <section class="scroll-section" id="section-3">
+      <div class="content-card">
+        <h1>MATERIAL DETAIL</h1>
+        <p>Physical surface interactions behaving accurately with global reflections.</p>
+      </div>
+    </section>
+
+    <!-- Section 4: System Reset / Call-To-Action Phase -->
+    <section class="scroll-section" id="section-4">
+      <div class="content-card modern-center">
+        <h1>DISCOVER MORE</h1>
+        <button class="cta-button">Enter Experience</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
